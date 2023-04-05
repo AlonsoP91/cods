@@ -1,0 +1,205 @@
+section .data
+    fisrstmsg db "peso de las pracitcas:"
+    lenf equ $ - fisrstmsg
+
+    secondmsg db "Pesos de los laboratorios:"
+    lens equ $ - secondmsg
+
+    thirdmsg db "peso del examen parcial:"
+    lent equ $ - thirdmsg
+
+    fourtmsg db "peso del examen final:"
+    lenfo equ $ - fourtmsg
+
+    fiftmsg db "Nota final calculada:"
+    lenfi equ $ - fiftmsg
+
+    ;arreglos
+    areglosPeso times 4 dq 0;d1 0 0 0 0 
+    arregloNotas dq 15,18,12,15
+
+    ;auxilair
+    solution dq 0
+    char dq 0
+    ;pesos
+    pesoPractica dq 0
+    pesoLaboratorio dq 0
+    pesoExamenParcial dq 0
+    pesoExamenFInal dq 0
+
+section .text
+    global _start
+
+_start:
+    mov rax,1
+    mov rdi,1
+    mov rsi ,fisrstmsg
+    mov rdx ,lenf
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,pesoPractica
+    mov rdx,1
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,char ;leer enter
+    mov rdx,1
+    syscall
+
+
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,secondmsg
+    mov rdx,lens
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,pesoLaboratorio
+    mov rdx,1
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,char ;leer enter
+    mov rdx,1
+    syscall
+
+
+
+
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,thirdmsg
+    mov rdx,lent
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,pesoExamenParcial
+    mov rdx,1
+    syscall
+    
+    mov rax,0
+    mov rdi,0
+    mov rsi,char ;leer enter
+    mov rdx,1
+    syscall
+
+ 
+
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,fourtmsg
+    mov rdx,lenfo
+    syscall 
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,pesoExamenFInal
+    mov rdx,1
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,char ;leer enter
+    mov rdx,1
+    syscall
+
+
+
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,fiftmsg
+    mov rax,lenfi
+    syscall 
+
+;limpiar
+
+xor rax,rax
+xor rbx,rbx
+xor rcx,rcx
+xor rdx,rdx
+
+;INICIO
+inicio:
+    ;se llama al arreglo
+mov rcx,[pesoPractica]
+sub rcx,30h
+mov [areglosPeso],rcx
+
+mov rcx,[pesoLaboratorio]
+sub rcx,30h
+mov [areglosPeso+8],rcx
+
+mov rcx,[pesoExamenParcial]
+sub rcx,30h
+mov [areglosPeso+16],rcx
+
+mov rcx,[pesoExamenFInal]
+sub rcx,30h
+mov [areglosPeso+24],rcx
+
+;se inicializan las variables
+
+mov r8,0;int sumprom0;
+mov r9,0;int suma peso0;
+mov rcx,0;int contevaluaciones 0;
+
+bucle:
+    cmp rcx,4
+    jge division
+    mov rax,[areglosPeso + 8 * rcx]
+    add r9,rax
+    mov rbx,[arregloNotas + 8 * rcx]
+    mul rbx
+    add r8,rax
+    inc rcx 
+    jmp bucle
+
+division:
+    mov rax,r8
+    div r9
+    xor rdx,rdx ;limpiar
+
+impresion:
+    cmp rax,10
+    jl final
+    mov rcx,10
+    div rcx
+    mov r10,rdx
+    add rax,30h
+    mov [solution],rax
+    
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+    mov rax,r10
+
+final:
+    add rax,30h
+    mov [solution],rax
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,char
+    mov rdx,1
+    syscall
+
+    mov rax,60
+    mov rax,0
+    syscall

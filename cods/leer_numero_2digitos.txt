@@ -1,0 +1,93 @@
+section .data
+    firstmsg db "ingresa los dos numeros a comparar:"
+    lenf equ $ - firstmsg
+
+    secondmsg db "el mcd tiene el valor de: "
+    lens equ $ - secondmsg
+    
+    num1D dq 0
+    num1U  dq 0
+    num2 dq 0
+    char dq 0
+
+    solution dq 0
+section .text
+    global _start
+
+_start:
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,firstmsg
+    mov rdx,lenf
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,num1D
+    mov rdx,1
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,num1U
+    mov rdx,1
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,char
+    mov rdx,1
+    syscall
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,secondmsg
+    mov rdx,lens
+    syscall
+
+    xor rax,rax
+    xor rbx,rbx
+    xor rcx,rcx
+    xor rdx,rdx
+
+    
+inicio:
+
+    mov rax,10
+    mov r10,[num1D]
+    sub r10,30h
+    mul r10
+    mov r11,[num1U]
+    sub r11,30h
+    add r11,rax
+    mov rax,r11
+impresion:
+    cmp rax,10
+    jl final
+    mov rcx,10
+    div rcx
+    mov r10,rdx
+    add rax,30h
+    mov [solution],rax
+    
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+    mov rax,r10
+
+final:
+    add rax,30h
+    mov [solution],rax
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+
+
+    mov rax,60
+    mov rax,0
+    syscall

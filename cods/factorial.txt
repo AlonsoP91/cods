@@ -1,0 +1,97 @@
+section .data
+    firstmsg db "ingresa el numero: "
+    lenf equ $ - firstmsg
+
+    secondmsg db "el factorial: "
+    lens equ $ - secondmsg
+
+    num1 dq 0
+
+    solution dq 0
+    char dq 0
+section .text
+    global _start
+
+_start:
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,firstmsg
+    mov rdx,lenf
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,num1
+    mov rdx,1
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,char
+    mov rdx,1
+    syscall
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,secondmsg
+    mov rdx,lens
+    syscall
+
+    
+
+    xor rax,rax
+    xor rbx,rbx
+    xor rcx,rcx
+    xor rdx,rdx
+
+inicio:
+    mov r8,1
+    mov rax,1
+    mov r9,[num1]
+    sub r9,30h
+    jmp factorial
+
+factorial:
+    cmp r9,1
+    je impresion
+    mul r9
+    dec r9
+    jmp factorial
+
+impresion:
+    cmp rax,10
+    jl final
+    mov rcx,10
+    div rcx
+    mov r10,rdx
+    add rax,30h
+    mov [solution],rax
+    
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+    mov rax,r10
+    jmp impresion
+final:
+    add rax,30h
+    mov [solution],rax
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,char
+    mov rdx,1
+    syscall
+
+    mov rax,60
+    mov rax,0
+    syscall
+
+

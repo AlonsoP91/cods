@@ -1,0 +1,34 @@
+impresion:
+    cmp rax,10
+    jl final
+    mov rcx,10
+    div rcx
+    mov r10,rdx
+    add rax,30h
+    mov [solution],rax
+    
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+    mov rax,r10
+
+final:
+    add rax,30h
+    mov [solution],rax
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,char
+    mov rdx,1
+    syscall
+
+    mov rax,60
+    mov rax,0
+    syscall

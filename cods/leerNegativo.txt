@@ -1,0 +1,114 @@
+section .data
+    firstmsg db "ingresa los dos numeros a comparar:"
+    lenf equ $ - firstmsg
+
+    secondmsg db "el mcd tiene el valor de: "
+    lens equ $ - secondmsg
+
+    num1 dq 0
+    num2 dq 0
+    signo dq 0
+    solution dq 0
+    char dq 0
+section .text
+    global _start
+
+_start:
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,firstmsg
+    mov rdx,lenf
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,signo
+    mov rdx,1
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,num1
+    mov rdx,1
+    syscall
+
+    mov rax,0
+    mov rdi,0
+    mov rsi,char
+    mov rdx,1
+    syscall
+
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,secondmsg
+    mov rdx,lens
+    syscall
+
+inicio:
+    mov r8,[signo]
+    cmp r8,45
+    je negativo
+    mov rax,[num1]
+    sub rax,30h
+    jmp impresion
+
+negativo:
+    mov r9,[num1]
+    sub r9,30h
+    neg r9
+    mov rax,r9
+    jmp impresionNegativo
+impresion:
+    cmp rax,10
+    jl final
+    mov rcx,10
+    div rcx
+    mov r10,rdx
+    add rax,30h
+    mov [solution],rax
+    
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+    mov rax,r10
+
+final:
+    add rax,30h
+    mov [solution],rax
+    mov rax,1
+    mov rdi,1
+    mov rsi,solution
+    mov rdx,1
+    syscall
+
+    mov rax,1
+    mov rdi,1
+    mov rsi,char
+    mov rdx,1
+    syscall
+
+    mov rax,60
+    mov rax,0
+    syscall
+
+impresionNegativo:    
+    mov r13, rax;guardo los valores de rax
+    mov r14, rdx;guardo el valor de rdx
+
+    mov rax, 1
+    mov rdi, 1 
+    mov rsi, signo
+    mov rdx, 1
+    syscall
+
+    mov rdx, r14;recupero el valor de rdx
+    mov rax, r13;recupero el valor de rax
+    neg rax;niego la discriminante
+    cmp rax, 10 ;comparo si es de 1 digito o mas 
+
+    jle final
+    jmp impresion

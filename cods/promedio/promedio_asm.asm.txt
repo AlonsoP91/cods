@@ -1,0 +1,26 @@
+ global promedio_asm
+    section .text
+;rdi -- arr
+;rsi -- n
+;xmm0 --retorno
+promedio_asm:
+    xor r9,r9;suma de todo
+    xor r10,r10;contador 0
+    xorpd xmm1,xmm1
+;suamdor
+    jmp ciclo
+
+ciclo:
+    cmp r10,rsi
+    je division
+    movss xmm0,[rdi+4*r10]
+    addss xmm1,xmm0
+    inc r10
+jmp ciclo ;xmm0 tiene la suma;
+
+
+division:
+    movss xmm0,xmm1;
+    cvtsi2ss xmm2,rsi
+    divss xmm0,xmm2
+ret

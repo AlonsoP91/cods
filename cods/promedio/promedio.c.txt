@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include<math.h>
+#include<stdlib.h>
+#include<time.h>
+extern float promedio_asm(float arr[],int n);
+void initVector(float *v, int N);
+float promedio(float arr[],int n);
+int main(){
+
+    float arr[8]={12.5,16.4,11.9,18.1,19.3,17.7,14.4,15.5};
+    int n=8;
+    float resultado,resultado2;
+    
+    resultado2=promedio(arr,n);    
+    printf(" %.2f \n",resultado2);
+    resultado=promedio_asm(arr,n);
+    printf(" %.2f \n",resultado);
+
+        // semilla para los números aleatorios
+    srandom(time(NULL));
+
+    float *v1, *v2, ipC, ipAsm;
+    int N = 1024;
+
+    v1 = malloc(N * sizeof(float));
+
+    v2 = malloc(N * sizeof(float));
+
+    int i = 0;
+
+    initVector(v1, N);
+    initVector(v2, N);
+
+    struct timespec ti, tf;
+    double elapsed;
+
+    clock_gettime(CLOCK_REALTIME, &ti);
+    resultado2=promedio(arr,n);
+    clock_gettime(CLOCK_REALTIME, &tf);
+    elapsed = (tf.tv_sec - ti.tv_sec) * 1e9 + (tf.tv_nsec - ti.tv_nsec);
+    printf("el tiempo en nanosegundos que toma la función en C es %lf\n", elapsed);
+
+    clock_gettime(CLOCK_REALTIME, &ti);
+    resultado=promedio_asm(arr,n);
+    clock_gettime(CLOCK_REALTIME, &tf);
+    elapsed = (tf.tv_sec - ti.tv_sec) * 1e9 + (tf.tv_nsec - ti.tv_nsec);
+    printf("el tiempo en nanosegundos que toma la función en ASM es %lf\n", elapsed);
+
+
+
+    free(v1);
+
+    free(v2);
+
+
+    return 0;
+}
+
+float promedio(float arr[],int n){
+    int i;
+    float suma=0;
+    for(i=0;i<n;i++)suma+=arr[i];
+    return (suma/n);
+}
+void initVector(float *v, int N)
+{
+    for (int i = 0; i < N; i++)
+    {
+        float e = random() % 255;
+        v[i] = (sinf(e) + cosf(e));
+    }
+}

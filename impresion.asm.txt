@@ -1,0 +1,111 @@
+section .data
+    firstMsg db "Ingrese el valor de n: "
+    lenf equ $ - firstMsg
+    secondMsg db "La solucion es: "
+    lens equ $ - secondMsg
+    number dq 0     ;Esta variable contendrá el valor de n
+    solution dq 0       ;Esta variable contendrá el resultado de la sumatoria
+    char dq 10
+
+section .text
+    global _start
+
+_start:
+    ;Vamos ha imprimir el mensaje que pide el valor de n
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, firstMsg
+    mov rdx, lenf
+    syscall
+
+    ;Vamos a leer el valor de n
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, number     ;Recuerda: Lo que se lee es un caracter y lo que se guarda
+                        ; en number es el codigo ASCII del caracter leído
+    mov rdx, 1
+    syscall
+
+    ;Pasando el valor de n de caracter a número
+    mov rcx, [number]
+    sub rcx, 30H        ;Se le resta 48 a rcx para tener su valor como número
+                        ;Ejemplo: Si a number le damos el valor de 6, lo que se va a guardar en 
+                        ;number es el codigo ascii de 6, osea 54 y si luego le restamos 48
+                        ;number tendrá el valor de 6 que es con que queremos trabajar
+
+    ;Para este punto, rcx tiene el valor de n
+
+;Vamos a hallar la sumatoria de i^2 en un bucle
+countLoop:
+    mov rax, rcx    ;rax empieza con el valor de n
+    mul rcx         ; rax = rax * rcx  => rax = n * n
+    add [solution], rax
+    dec rcx         ;Decrementamos el valor de n
+    cmp rcx, 0
+    jne countLoop
+
+    ;Imprimiendo "La solucion es: "
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, secondMsg
+    mov rdx, lens
+    syscall
+
+test:
+    ;Preparando algunas variables y registros para ir sacando dígito por dígito al
+    ;valor de solution
+    xor rcx, rcx    ;Limpiamos el registro rcx
+    xor rax, rax
+    mov r8, 10
+    mov rcx, [solution]     ;Cuando n es 6, [solution] es 91
+    mov rbx, 0              ;rbx contiene la cantidad de digitos que tiene la variable solution
+    xor rdx, rdx            ;SI NO LIMPIAS ESTO, EL PROGRAMA SE CAE
+    ;En este punto rcx = 91
+    ;OJO: Podríamos pasar [solution] al registro rax y la logica se simplificaría
+    ;pero no es recomedable trabajar con el rax ya que en este se guardará
+    ;el resultado de cuando multipliquemos o dividamos un número de 64bits
+
+PusheandoLosDigitosDelResultado:
+    mov rax, rcx
+    cmp rcx, r8 
+    jl aux
+
+    div r8
+    inc rbx
+    push rdx        ;Este es el residuo de la división
+
+    mov rcx, rax
+    jmp PusheandoLosDigitosDelResultado
+
+aux:
+    inc rbx
+    push rax
+
+ImprimiendoLosDigitosDelResultado:
+    cmp rbx,0
+    je end
+    dec rbx
+    pop rcx
+
+    add rcx, 30H
+    mov [solution], rcx     ;[solution] va a ir conteniendo los "códigos ascii" de cada uno de los
+                            ; dígitos del resultado
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, solution
+    mov rdx, 1
+    syscall
+
+    jmp ImprimiendoLosDigitosDelResultado
+
+end:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, char
+    mov rdx, 1
+    syscall
+
+    mov rax, 60
+    mov rdi, 0
+    syscall

@@ -1,0 +1,14 @@
+#include<stdio.h>
+#include<math.h>
+#include<stdlib.h>
+#include<time.h>
+extern int doble(int a,int b,int *c);
+int main(){
+    int a=50,b=30,d,c;
+    d=doble(a,b,&c);
+
+        printf(" %d \n",d);
+        printf(" %d",c);
+
+    return 0;
+}

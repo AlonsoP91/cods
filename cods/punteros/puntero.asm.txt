@@ -1,0 +1,12 @@
+    global doble
+    section .text
+;rdi -- a
+;rsi -- b
+;rdx --*c
+;rax retorno
+doble:
+    mov rax,rdi
+    add rax,rsi
+    sub rdi,rsi
+    mov [rdx],rdi;al valor de la memoria le paso el resultado
+ret

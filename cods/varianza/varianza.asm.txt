@@ -1,0 +1,45 @@
+    global d_e_asm
+    section .text
+;rdi -- arr
+;rsi -- n
+;xmm0 --retorno
+d_e_asm:
+    xor r8,r8
+    xor r10,r10
+    xorpd xmm1,xmm1
+    xorpd xmm0,xmm0
+    xorpd xmm2,xmm2
+    xorpd xmm3,xmm3
+    media:
+
+media:
+    cmp r8,rsi
+    je div
+    movss xmm1,[rdi+4*r8]
+    inc r8
+    addss xmm0,xmm1
+jmp media
+
+div:
+    cvtsi2ss xmm2,rsi
+    divss xmm0,xmm2
+    xorpd xmm2,xmm2
+jmp des
+
+des:
+    cmp r10,rsi
+    je fin
+    movss xmm2,[rdi+4*r10]
+    inc r10
+    subss xmm2,xmm0
+    mulss xmm2,xmm2
+    addss xmm3,xmm2
+jmp des
+
+fin:
+    cvtsi2ss xmm2,rsi
+    divss xmm3,xmm2
+    movss xmm0,xmm3
+ret
+
+

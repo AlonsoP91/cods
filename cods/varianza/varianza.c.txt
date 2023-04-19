@@ -1,0 +1,81 @@
+#include<stdio.h>
+#include<math.h>
+#include<stdlib.h>
+#include<time.h>
+extern float d_e_asm(float arr[],int n);
+float d_e(float arr[],int n);
+void initVector(float *v, int N);
+float calcRelErr(float ref, float cal);
+int main(){
+    float arr[8]={12.2,13.5,11.9,14.9,17.7,18.9,19.1,19.8};
+    float resultado,resultado2;
+    int n=8;
+    resultado=d_e(arr,8);
+    resultado2=d_e_asm(arr,8);
+        printf(" %lf \n",resultado);
+        printf(" %lf ",resultado2);
+
+    srandom(time(NULL));
+
+    float *v1, *v2, ipC, ipAsm;
+    int N = 1024;
+
+    v1 = malloc(N * sizeof(float));
+
+    v2 = malloc(N * sizeof(float));
+
+    int i = 0;
+
+    initVector(v1, N);
+    initVector(v2, N);
+
+    struct timespec ti, tf;
+    double elapsed,elapsed2;
+
+    clock_gettime(CLOCK_REALTIME, &ti);
+    resultado2=d_e(arr,n);
+    clock_gettime(CLOCK_REALTIME, &tf);
+    elapsed = (tf.tv_sec - ti.tv_sec) * 1e9 + (tf.tv_nsec - ti.tv_nsec);
+    printf("el tiempo en nanosegundos que toma la función en C es %lf\n", elapsed);
+
+    clock_gettime(CLOCK_REALTIME, &ti);
+    resultado=d_e_asm(arr,n);
+    clock_gettime(CLOCK_REALTIME, &tf);
+    elapsed2 = (tf.tv_sec - ti.tv_sec) * 1e9 + (tf.tv_nsec - ti.tv_nsec);
+    printf("el tiempo en nanosegundos que toma la función en ASM es %lf\n", elapsed2);
+
+    float relerr = calcRelErr(resultado, resultado2);
+    printf("el error relativo es %f\n", relerr);
+
+    printf(" el speedUp es: %f",elapsed/elapsed2);
+
+    return 0;
+}
+float d_e(float arr[],int n){
+    float media=0,suma=0,var,total=0,des;
+
+    for(int i=0;i<n;i++)suma+=arr[i];
+
+    media=(float)suma/n;
+    for(int i=0;i<n;i++){
+
+        var=arr[i]-media;
+        var=var*var;
+        total+=var;
+    }
+    des=(float)total/n;
+
+    return des;
+}
+void initVector(float *v, int N)
+{
+    for (int i = 0; i < N; i++)
+    {
+        float e = random() % 255;
+        v[i] = (sinf(e) + cosf(e));
+    }
+}
+float calcRelErr(float ref, float cal)
+{
+    return fabsf(ref - cal) / fabsf(ref);
+}

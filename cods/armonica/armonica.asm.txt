@@ -1,0 +1,31 @@
+ global armonica_asm
+    section .text
+;rdi -- arr
+;rsi -- n
+;xmm0 --retorno
+armonica_asm:
+    xor r8,r8;
+    mov r9,1
+    cvtsi2ss xmm1,r9
+    xorpd xmm2,xmm2
+    
+    jmp ciclo
+
+ciclo:
+    cmp r8,rsi
+    je fin
+    movss xmm0,[rdi+4*r8]
+    inc r8
+    divss xmm1,xmm0
+    addss xmm2,xmm1
+    cvtsi2ss xmm1,r9
+jmp ciclo
+
+fin:
+    cvtsi2ss xmm3,rsi
+    divss xmm3,xmm2
+    movss xmm0,xmm3
+ret
+
+
+

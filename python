@@ -1,0 +1,162 @@
+ok=1
+ok2=0
+nombre="alonso"
+edad=20
+
+print(f"Hola {nombre} ,usted tiene {edad}")
+if(ok and ok2):
+    print("ola")
+
+valor=int(input("digite el numero:"))
+valor=float(input("digite el numero:"))
+nombre=(input("digite el numero:"))
+n=bin(20)#binairo
+n=hex(40)#hexadecimal
+n=int("10")
+n=float("10")
+m=str(30)#cadena
+n=int("0b1010",2)
+n=round(32.5)#redondedo
+
+n=len("hola buenas")
+
+
+#condicionales
+
+
+if(n>0):
+    print("hola")
+elif(n==0):
+    print("wa")
+else:
+    print("ja")
+    
+#listas
+
+lista=["Lunes"]
+print(lista[0:])#hasta el final
+print(lista[:4])#hasta el final
+
+lista.append("Martes")#agregar al final
+lista.insert(3,4)# primero el indice y luego el valor
+lista.extend([6,7,8])#concatenar una lista al final
+#lista1=lista2+lista3
+
+print(3 in lista)# 3 este en lista?
+
+lista.index(5)# le das el valor y te devuelve el indice
+lista.count(2)#cuantas veces aparece el 2
+lista.pop()#eliminar el ultimo elemento
+lista.pop(2)#indice que se quiere eliminar
+
+lista.remove(5)#le pasas el valor apra eliminar
+lista.reverse()#swap
+
+lista=["Lunes"]*2
+
+lista3=[5,4,2,6,7,8,1]
+lista3.sort()#ordenar ascendente
+lista.sort(reverse=True)#ordenar descendente
+
+empty_list = list() # this is an empty list, no item in the list
+print(len(empty_list)) # 0
+
+
+#tuplas
+
+tupla=(4,7,3,7)
+
+print(tupla[1:])
+print(tupla[:3])
+
+tupla.index(4)#devuelve el indice
+print(len(tupla))
+
+lista=list(tupla)#transformar tupla en lista
+
+tupla=tuple(lista)
+empty_tuple = ()
+# or using the tuple constructor
+empty_tuple = tuple()
+
+
+
+
+# syntax
+#no hay valores duplicados
+# conjuntos
+st = set()
+st = {}
+st={1,2,3,"hola"}
+
+st.add(3)#agregar un valor en cualquier lugar
+st.clear()
+
+print(3 not in st)
+#te imprime falso o verdadero
+a={1,2,3,}
+b={3,4,5,6}
+
+c=a|b  #unir conjuntos
+c=a-b #sol conjunto a y no b
+
+c=a^b()#todo menos la interseccion
+print(c)
+            #clabe  valorñ
+            
+            
+            
+            #diccionarios
+diccionario={"azul":"blue","rojo":"red"}
+
+print(diccionario["azul"])
+
+diccionario["amarillo"]="yellow"
+
+del(diccionario["rojo"]) #borrar elemento
+
+diccionario2={"azul":{22,1.62},"rojo":[23,1.79]}
+
+print(diccionario2.get(9,"no existe un jugador"))
+print(11 in diccionario)# true o false
+print(diccionario.keys()) # solo las llaves
+print(diccionario.items()) # solo las llaves
+
+
+
+
+#RESUMEN//////////////////////////////////////////////////////////////////
+import math
+empty_list = list() # this is an empty list, no item in the list
+print(len(empty_list)) # 0
+
+# or using the tuple constructor
+empty_tuple = tuple()
+
+st = set()
+st = {}
+
+empty_dict=dict() 
+empty_dict={}
+
+#bucle while
+
+numero=int(input("digite el numero"))
+
+while numero<0 :
+    print("Error -> Deberia ser un numero positivo")
+    numero=int(input("digite el numer"))
+    
+print(f"\n su raiz cuadrada es {math.sqrt(numero):.2f}")
+
+
+#for
+
+
+for i in [1,2,3,4,5]:
+    print(f"{i}")
+#recorre la coleccion
+
+
+for i in range(5):
+    print("hola")

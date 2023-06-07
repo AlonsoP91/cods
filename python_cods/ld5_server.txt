@@ -1,0 +1,150 @@
+from statistics import mode,pstdev
+
+from collections import Counter
+import json
+import socket
+import time
+def leer_archivo():
+    with open('Lab4_viernes.csv','r') as f:
+        contenido=f.read()
+
+    lineas=contenido.split("\n")#separo las lineas del csv
+    dateCrawled = []
+    name = []
+    seller = []
+    offerType = []
+    price = []
+    abtest = []
+    vehicleType = []
+    yearOfRegistration = []
+    gearbox = []
+    powerPS = []
+    model = []
+    kilometer = []
+    monthOfRegistration = []
+    fuelType = []
+    brand = []
+    notRepairedDamage = []
+    dateCreated = []
+    nrOfPictures = []
+    postalCode = []
+    lastSeen = []
+
+    
+    lineas=lineas[1:140000]
+    
+    for linea in lineas:
+        datos=linea.split(',')
+        if datos[0] == "":continue
+        dateCrawled.append(datos[0])
+        if datos[1] == "":continue
+        name.append(datos[1])
+        if datos[2] == "":continue
+        seller.append(datos[2])
+        if datos[3] == "":continue
+        offerType.append(datos[3])
+        if datos[4] == "":continue
+        price.append(datos[4])
+        if datos[5] == "":continue
+        abtest.append(datos[5])
+        if datos[6] == "":continue
+        vehicleType.append(datos[6])
+        if datos[7] == "":continue
+        yearOfRegistration.append(datos[7])
+        if datos[8] == "":continue
+        gearbox.append(datos[8])
+        if datos[9] == "":continue
+        powerPS.append(datos[9])
+        if datos[10] == "":continue
+        model.append(datos[10])
+        if datos[11] == "":continue
+        kilometer.append(datos[11])
+        if datos[12] == "":continue
+        monthOfRegistration.append(datos[12])
+        if datos[13] == "":continue
+        fuelType.append(datos[13])
+        if datos[14] == "":continue
+        brand.append(datos[14])
+        if datos[15] == "":continue
+        notRepairedDamage.append(datos[15])
+        if datos[16] == "":continue
+        dateCreated.append(datos[16])
+        if datos[17] == "":continue
+        nrOfPictures.append(datos[17])
+        if datos[18] == "":continue
+        postalCode.append(datos[18])
+        if datos[19] == "":continue
+        lastSeen.append(datos[19])
+    return dateCrawled,name,seller,offerType,price,abtest,vehicleType,yearOfRegistration,gearbox,powerPS,model,kilometer,monthOfRegistration,fuelType,brand,notRepairedDamage,dateCreated,nrOfPictures,postalCode,lastSeen
+ 
+
+def recogeModa(hora:list)->str:
+    aux=list()
+    for elem in hora:
+        dato=elem.split(' ')
+        aux.append(dato[1])
+    return mode(aux)
+
+def combustible(combustible:list):
+    mayor=list(Counter(combustible).keys())
+    return len(mayor),Counter(combustible),mode(combustible)
+
+def marca(brand:list):
+    numero=list(Counter(brand).keys())
+    return len(numero),Counter(brand)   
+
+def kilometro(kilometer:list):
+    moda=mode(kilometer)
+    kilometer.sort()
+    mediana=kilometer[len(kilometer)//2]
+    dee=pstdev(kilometer)
+    return moda,mediana,dee
+    
+           
+if __name__ == '__main__':
+    dateCrawled,name,seller,offerType,price,abtest,vehicleType,yearOfRegistration,gearbox,powerPS,model,kilometer,monthOfRegistration,fuelType,brand,notRepairedDamage,dateCreated,nrOfPictures,postalCode,lastSeen = leer_archivo()
+    
+    
+    SOCK_BUFFER = 1024
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ("0.0.0.0", 5000)
+    print(f"Iniciando en servidor {server_address[0]} en el puerto {server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(5)
+
+    while True:
+        print("Esperando conexion...")
+        conn, client_address = sock.accept()
+        with conn:
+            print(f"Conexion desde {client_address[0]} en puerto {client_address[1]}")
+            datos=conn.recv(SOCK_BUFFER)
+            opcion=datos.decode()
+            if(opcion=="1"):
+                moda=recogeModa(dateCrawled)
+                msg=f"la hora mas solicitada es :{moda}\n"
+                conn.sendall(msg.encode())
+            elif(opcion=="2"):
+                cantidad,dict,popular=combustible(fuelType)
+                popu=json.dumps(dict)
+                msg=""
+                msg=msg+f"la cantidad de combustibles que hay es :{cantidad}\n"
+                msg=msg+f"el combustible mas popular es:{popular}"
+                conn.sendall(msg.encode())
+                
+                conn.sendall(popu.encode())
+            elif(opcion=="3"):
+                numero,dictMarca=marca(brand)
+                marcaa=json.dumps(dictMarca)
+                msg=f"la cantidad de marcas es:{numero}"
+                conn.sendall(msg.encode())
+                conn.sendall(marcaa.encode())
+            elif(opcion=="4"):
+                kilometer=[int(x) for x in kilometer]
+                moda,mediana,dee=kilometro(kilometer)
+                msg=f"la moda es : {moda} || la mediana es : {mediana} || la desviacion es: {dee}"
+                conn.sendall(msg.encode())
+            else:
+                break

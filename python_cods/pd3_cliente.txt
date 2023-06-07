@@ -1,0 +1,70 @@
+import socket
+import json
+import time
+import matplotlib.pyplot as plt
+
+
+HOST = "192.168.56.1"
+IP = 5000
+
+def pregunta_sn(pregunta:str) -> bool:
+    rpta = input(pregunta)
+    if rpta == 's':
+        return True
+    elif rpta == 'n':
+        return False
+    else:
+        raise Exception("Caracter no valido")
+
+if __name__ == '__main__':
+    try:
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_address = (HOST,IP)
+
+        sock.connect(server_address)
+        print("Seleccione la opcion:")
+        print("1: AÑadir paciente")
+        print("2: Descargar base de datos")
+        opcion=input()
+        sock.sendall(opcion.encode())
+        if opcion=='1':
+            print("Ingrese datos del paciente: ")
+            paciente = {}#Creando un diccionario vacio
+            #Vamos a agregar datos al diccionario de la siguiente manera:
+                #paciente["nombreDeLaLlave"] = ....
+            paciente["nombre"] = input("Nombre: ")
+            paciente["apellido"] = input("Apellido: ")
+            paciente["peso"] = float(input("Peso: "))
+            paciente["talla"] = int(input("Talla: "))
+            paciente["edad"] = int(input("Edad: "))
+            paciente["seguro"] = pregunta_sn("¿Cuenta con seguro? (s/n): ")
+
+            msg_jason = json.dumps(paciente)#Convierte un diccionario en un string
+            sock.sendall(msg_jason.encode())
+        elif opcion=='2':
+            vel_descarga=[]
+            with open('descarga.csv','wb') as f:
+                while True:
+                    start= time.perf_counter()
+                    msg=sock.recv(1024)
+                    stop=time.perf_counter()
+                    vel_descarga.append(1024/(stop-start))
+                    if not msg:
+                        break
+                    f.write(msg)
+            plt.plot([i for i in range(len(vel_descarga))],vel_descarga)
+            plt.savefig('Descarga.png')
+            
+            vel_descarga.sort()
+            print(f"velocidad mediana :{vel_descarga[int(len(vel_descarga)/2)]}")# tbm se puede usar // para una divsion entera
+
+            
+    except ConnectionRefusedError:#se va a entrar acá cuando un cliente se intente conectar
+                                #pero el servidor no está corriendo
+        print("Servido cerrado")
+    finally:#Entramos acá cuando ocurre algún error cuando nos estamos conectando al servidor
+        sock.close()
+
+#Pregunta:
+#1)(Cuando sí definimos un finally)Qué pasa cuando ocurre un error en el codigo de try??

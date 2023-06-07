@@ -1,0 +1,50 @@
+import socket
+import json
+
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ("0.0.0.0", 5000)
+    print(f"Iniciando en servidor {server_address[0]} en el puerto {server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(5)
+
+    while True:
+        print("Esperando conexion...")
+        conn, client_address = sock.accept()
+        with conn:
+            msg_waw=conn.recv(1024)
+            opcion=msg_waw.decode()
+            if opcion=='1':
+                msg_raw_codificado = conn.recv(1024)
+                msg_raw_decodificado = msg_raw_codificado.decode("utf-8")
+                paciente_dict = json.loads(msg_raw_decodificado)#Con esto pasamos de un string a un diccionario
+                print(paciente_dict)
+                #msg=""
+                #msg=paciente_dict["nombre"]+","+paciente_dict["apellido"]+","+str(paciente_dict["peso"])+","+str(paciente_dict["talla"])+","+str(paciente_dict["edad"])+","+str(paciente_dict["seguro"])+"\n"
+                
+                with open("pacientes.csv", "a+") as f: #a+ signfica append  para agregarlo al final
+                    lista_str=[str(elem) for elem in paciente_dict.values()]
+                    f.write(','.join(lista_str))
+                # contenido = f.read()
+        
+                #contenido += f"\n{msg}"
+
+                #with open("pacientes.csv", "w+") as f:
+                #    f.write(contenido)
+            elif opcion=='2':
+                with open('pacientes.csv','rb') as f:
+                    while True:
+                        msg=f.read(1024)
+                        if not msg:
+                            break
+                        conn.sendall(msg)
+
+                    
+                
+                
+#Pregunta:
+#1)Por qué en servidor.py no se define un main, pero el cliente.py si???
+#2)Para qué sirve el s.listen() ??
+#3)Para qué sirve el with conn: de la línea 24 ??

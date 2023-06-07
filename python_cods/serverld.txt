@@ -1,0 +1,61 @@
+import socket
+import csv
+
+SOCK_BUFFER = 1024
+notas={}
+
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ("0.0.0.0", 5000)
+    print(f"Iniciando en servidor {server_address[0]} en el puerto {server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(5)
+
+    while True:
+        print("Esperando conexion...")
+        conn, client_address = sock.accept()
+        with conn:
+            print(f"Conexion desde {client_address[0]} en puerto {client_address[1]}")
+            cant_notas=conn.recv(SOCK_BUFFER).decode('utf-8')#recibe cadena 1 cant notas
+            data=conn.recv(SOCK_BUFFER).decode('utf-8')#recibe cadena 2 nombre+notas en lista que se divide en ,
+            if(cant_notas=="fin"):
+                continue
+            else:
+                print(data)
+                data=data[1:len(data)-1] #le quito las llaves
+                print(data)
+                info=data.split(', ') #separo las notas
+                cant_notas=int(cant_notas)# casteo la cantidad de notas como enteros
+                print(cant_notas)
+                print(info[0])
+                print(info[1])
+                print(info[2])
+                
+                sum=0
+                notas=dict()
+                empty=list()
+                for i in range(cant_notas):
+                    sum+=int(info[i+1])
+                    empty.append(int(info[i+1]))
+                
+                promedio=float(sum/cant_notas)    
+                empty.append(promedio)
+                notas[info[0]]=empty
+                
+                    
+                mensaje=f'el promedio de las notas de {info[0]} es : {promedio}'   
+                
+                #notas[info[0][1:len(info[0]-1)]]=[int(element) for element in info[1:cant_notas+1]]+[round(sum(map(int,info[1:cant_notas+1]))/cant_notas)]
+                #mensaje=f'El promedio de las notas de {info[0][1:len(info[0]-1)]} es {round(sum(map(int,info[1:cant_notas+1]))/cant_notas)}'
+                
+                mensaje=str.encode(str(mensaje))
+                conn.sendall(mensaje)
+                
+                with open('database1.csv','w',newline='')as file:
+                    titulo=['Nombre']+['Nota'+str(i+1) for i in range(cant_notas)]+['promedio']
+                    writer=csv.writer(file)
+                    writer.writerow(titulo)
+                    [writer.writerow([key]+values) for key,values in notas.items()]
+                file.close()

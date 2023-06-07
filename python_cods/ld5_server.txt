@@ -1,5 +1,5 @@
 from statistics import mode,pstdev
-
+import csv
 from collections import Counter
 import json
 import socket
@@ -146,5 +146,21 @@ if __name__ == '__main__':
                 moda,mediana,dee=kilometro(kilometer)
                 msg=f"la moda es : {moda} || la mediana es : {mediana} || la desviacion es: {dee}"
                 conn.sendall(msg.encode())
-            else:
-                break
+            elif (opcion=="cerrar"):
+                with open('lab_04_reporte.txt','w+',newline='')as file:
+                    
+                    cantidad,dict,popular=combustible(fuelType)
+                    numero,dictMarca=marca(brand)
+                    marcaa=json.dumps(dictMarca)
+                    kilometer=[int(x) for x in kilometer]
+                    moda,mediana,dee=kilometro(kilometer)
+                    titulo="reporte c):\n"
+                    titulo=titulo+f"la cantidad de combustibles que hay es :{cantidad}\n"
+                    titulo=titulo+f"el combustible mas popular es:{popular}\n"
+                    titulo=titulo+f"reporte d):\n"
+                    titulo=titulo+f"la cantidad de marcas es:{numero}\n"
+                    titulo=titulo+f"{marcaa}\n"
+                    titulo=titulo+f"reporte e):\n"
+                    titulo=titulo+f"la moda es : {moda} || la mediana es : {mediana} || la desviacion es: {dee}"
+                    file.write(titulo+f"\n")     
+                    break

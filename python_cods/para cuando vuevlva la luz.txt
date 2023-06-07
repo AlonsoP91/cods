@@ -1,0 +1,49 @@
+string(diccionario)  es trolear
+
+para eso usamos pickles
+
+serializar cualquier objeto de python dicc,lista,tupla,tu vie...
+
+msg=pickle.dumps(dict)-->transforma el dict en bytes (encode)
+
+picle.loads(msg(codificado))-->devuelve el diccionario
+
+/////////////////////////////////////////////////////////////////////////////////
+
+json(java script object notation)  muy similar
+
+-transforma a cadena el dict u objeto
+
+msg=json.dumps(dict)-->transforma diccionario a cadena
+json.loads(msg)--devuelve el dict
+
+
+///////////////////////////////////
+
+diferencias
+
+-json mas estandar para mandar a un server tienes que usar encode y decode
+-pickles no necesita eso
+
+json:
+socket.sendall(msgJson.encode())
+
+pickle:
+socket.sendall(msg_pickle)
+
+////////////////////////////////////////
+
+Para graficos de mrd
+
+import matplotlib.pyplot as plt
+
+
+ejm
+
+numero=[i for i in range(1000)]
+numeroCuadrado=[i*i for i in range(1000)]
+
+plt.plot(numero,numeroCuadrado)
+plt.savefig('Figura.png')
+
+plt usa listas

@@ -33,9 +33,11 @@ else:
     
 #listas
 
+listaUnicos=set(lista)#para valores unicos
 lista=["Lunes"]
 print(lista[0:])#hasta el final
 print(lista[:4])#hasta el final
+
 
 lista.append("Martes")#agregar al final
 lista.insert(3,4)# primero el indice y luego el valor
@@ -81,7 +83,7 @@ empty_tuple = tuple()
 
 
 
-
+#sets
 # syntax
 #no hay valores duplicados
 # conjuntos

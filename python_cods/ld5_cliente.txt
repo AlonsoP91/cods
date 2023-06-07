@@ -42,5 +42,6 @@ if __name__ == '__main__':
         datos=sock.recv(1024)
         msg=datos.decode() 
         print(msg)
-    else:
+    elif opcion=="cerrar":
+        
         print("cerrando sesion")

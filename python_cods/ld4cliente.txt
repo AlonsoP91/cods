@@ -1,0 +1,37 @@
+import pickle
+import json
+import socket
+
+def pregunta_sn(pregunta:str) -> bool:
+	rpta = input(pregunta)
+	if rpta == 's':
+		return True
+	elif rpta == 'n':
+		return False
+	else:
+		raise Exception('Caracter no valido')
+
+def main()->str:
+    print("Ingrese datos del paciente")
+    paciente=dict()
+    
+    paciente['nombre']=input("Ingrese el nombre del paciente:")
+    paciente['apellido']=input("Ingrese el apellido del paciente:")
+    paciente['peso']=int(input("Ingrese el peso del paciente:"))
+    paciente['talla']=int(input("Ingrese la talla del paciente:"))
+    paciente['edad']=int(input("Ingrese la edad del paciente:"))
+    paciente['seguro']=pregunta_sn("¿Cuenta con seguro? (s/n): ")
+
+    msg_pickles = pickle.dumps(paciente)
+    return msg_pickles
+    
+if __name__ == '__main__':
+    cadena=main()
+    
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ("192.168.1.2", 5000)
+
+    print(f"Conectando a {server_address[0]}:{server_address[1]}")
+
+    sock.connect(server_address)
+    sock.sendall(cadena)#enviar cadenas1

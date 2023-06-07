@@ -1,0 +1,30 @@
+import socket
+import csv
+import pickle
+SOCK_BUFFER = 1024
+notas={}
+
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ("0.0.0.0", 5000)
+    print(f"Iniciando en servidor {server_address[0]} en el puerto {server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(5)
+
+    while True:
+        print("Esperando conexion...")
+        conn, client_address = sock.accept()
+        with conn:
+            dic=dict()
+            print(f"Conexion desde {client_address[0]} en puerto {client_address[1]}")
+            msg=conn.recv(SOCK_BUFFER)#recibe cadena 1 cant notas
+            #info=diccionario.split(': ')           
+            dic = pickle.dumps(msg)      
+            with open('database2.csv','w',newline='')as file:
+                    titulo=['Paciente']+['apellidos']+['peso']+['Talla']+['Edad']+['Seguro']
+                    writer=csv.writer(file)
+                    writer.writerow(titulo)
+                    [writer.writerow([key]+values) for key,values in dic.values()]
+            file.close()

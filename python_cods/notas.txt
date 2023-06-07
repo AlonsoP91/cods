@@ -1,0 +1,85 @@
+with open('Lab4_viernes.csv','r') as f:
+        contenido=f.read()
+
+para leer un archivo
+
+if datos[0] == "":continue
+
+para evitar espacios
+////////////////////////////////////////////////
+    SOCK_BUFFER = 1024
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ("0.0.0.0", 5000)
+    print(f"Iniciando en servidor {server_address[0]} en el puerto {server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(5)
+
+    while True:
+        print("Esperando conexion...")
+        conn, client_address = sock.accept()
+        with conn:
+
+estructura basica del server
+
+///////////////////////////////////////
+datos=conn.recv(SOCK_BUFFER)
+            opcion=datos.decode()
+	
+recibir opcion
+
+/////////////////////////////////////
+
+marcaa=json.dumps(dictMarca)
+conn.sendall(marcaa.encode())
+
+para enviar de server a cliente, al revez seria con sock
+
+///////////////////////////////////////////
+
+kilometer=[int(x) for x in kilometer]
+
+pasar una lista de strings a ints
+
+////////////////////////////////////////////
+
+Counter(brand) 
+
+diccionario con los valores y sus cantidades
+
+//////////////////////
+
+mode(kilometer)
+
+moda
+
+//////////////////////////////////////////////
+
+mayor=list(Counter(combustible).keys())
+
+lista con las llaves del diccionario
+
+
+///////////////////////////////////////////
+
+
+datos2=sock.recv(1024)
+        dict=datos2.decode()
+        diccionario=json.loads(dict)
+
+recibir un dict del  server e iprimir un dict
+
+/////////////////////////////////////////////////
+
+
+HOST = "192.168.56.1"
+IP = 5000
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = (HOST,IP)
+    sock.connect(server_address)
+
+estructura normal de un cliente
+

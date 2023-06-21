@@ -1,0 +1,21 @@
+import time 
+import logging
+from concurrent.futures import ThreadPoolExecutor
+
+logging.basicConfig(level=logging.DEBUG, format='%(threadName)s: %(message)s')
+def super_task(a,b):
+    #print(f"esto es {a} y {b}\n")
+    time.sleep(1)
+    logging.info(f'termino la tarea con los valores{a} y {b}')
+    
+
+if __name__ == '__main__':
+    executor=ThreadPoolExecutor(max_workers=3)#maximo numero de threads en el pool
+    executor.submit(super_task,10,20) #recibe tarea concurrente , si tiene argumentos pones con comas,submit busca threads disponibles
+    executor.submit(super_task,10,30) #recibe tarea concurrente , si tiene argumentos pones con comas,submit busca threads disponibles
+
+    executor.submit(super_task,20,30)
+    executor.submit(super_task,30,30)
+    
+    executor.submit(super_task,40,50)
+    executor.submit(super_task,40,60)

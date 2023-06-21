@@ -1,0 +1,84 @@
+import csv
+import time
+import asyncio
+puntaje=dict()
+
+
+async def fase_rondas_asyncss(nombres,elo,dia):
+    #primera
+    if dia==1:
+        if elo[0]>elo[1]:
+            puntaje[nombres[0]]+=1
+        else:
+            puntaje[nombres[1]]+=1
+        
+        if elo[2]>elo[3]:
+            puntaje[nombres[2]]+=1
+        else:
+            puntaje[nombres[3]]+=1
+    
+    if dia==2:
+        if elo[0]>elo[2]:
+            puntaje[nombres[0]]+=1
+        else:
+            puntaje[nombres[2]]+=1
+        
+        if elo[1]>elo[3]:
+            puntaje[nombres[1]]+=1
+        else:
+            puntaje[nombres[3]]+=1
+            
+    if dia==3:
+        if elo[0]>elo[3]:
+            puntaje[nombres[0]]+=1
+        else:
+            puntaje[nombres[3]]+=1
+        
+        if elo[2]>elo[1]:
+            puntaje[nombres[2]]+=1
+        else:
+            puntaje[nombres[1]]+=1
+         
+    await asyncio.sleep(0.15)
+
+        
+    
+    
+async def fase_rondas_asyncs(nombres,elo):
+    
+        await asyncio.gather(*(fase_rondas_asyncss(nombres,elo,i) for i in range(4)))
+    
+  
+def fase_rondas_async(nombres,elo)->str:
+    asyncio.run(fase_rondas_asyncs(nombres,elo))
+    max=0
+    for i in range(4):
+        if puntaje[nombres[i]]>max:
+            max=puntaje[nombres[i]]
+            maximo=nombres[i]
+    return maximo
+             
+if __name__=="__main__":
+    with open("players.csv", "r") as f:
+        contenido = f.read()
+        
+    filas=contenido.split("\n")
+    filas=filas[1:]
+    nombres=list()
+    elo=list()
+    for fila in filas:
+        fila=fila.split(";")
+        nombres.append(fila[0])
+        elo.append(fila[1])
+        
+    print(nombres)
+    print(elo)
+    for i in range(4):
+        puntaje[nombres[i]]=0
+    print(puntaje)
+    mejor=fase_rondas_async(nombres,elo)
+    print(puntaje)
+    print(mejor)
+    
+        
+    

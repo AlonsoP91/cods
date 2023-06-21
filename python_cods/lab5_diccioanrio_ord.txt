@@ -1,0 +1,10 @@
+from operator import itemgetter
+
+d={'alonso':20,'juan':19,'pablo':15,'bryan':12,'jose':17}
+
+d_asc=sorted(d.items(),key=itemgetter(1))#itemgetter() funciona para seleccionar si por llave o por valor
+d_dsc=sorted(d.items(),key=itemgetter(1),reverse=True)
+print(d)
+
+print(d_asc)
+print(d_dsc)

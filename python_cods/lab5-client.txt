@@ -1,0 +1,31 @@
+import socket
+import time
+MSG_NUM=10
+SOCK_BUFFER = 1024
+SLEEP_TIME=2
+
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ("192.168.1.2", 5000)
+
+    print(f"Conectando a {server_address[0]}:{server_address[1]}")
+
+    sock.connect(server_address)
+
+    try:
+        for i in range(MSG_NUM):
+            msg = f"Hola Mundo{i}"
+            sock.sendall(msg.encode("utf-8"))
+            amnt_rcv=0
+            amnt_expect=len(msg)#le envio varias veces el mensaje por eso lo leo por partes
+            msg_rx=""
+            while amnt_expect > amnt_rcv:
+                data = sock.recv(SOCK_BUFFER)
+                amnt_rcv+=len(data)
+                msg_rx+=data.decode("utf-8")
+            print(f"Recibi: {msg_rx}")
+            time.sleep(SLEEP_TIME)
+
+    finally:
+        print("Cerrando la conexion")
+        sock.close()

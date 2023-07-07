@@ -1,0 +1,57 @@
+import socket
+import time
+from threading import Thread
+SOCK_BUFFER = 1024
+
+
+def clientHandler(lst):
+    
+    data = conn.recv(SOCK_BUFFER)
+    msg = data.decode("utf-8")
+    if msg :
+        lst.append(msg)
+    
+    
+
+    
+
+
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ("0.0.0.0", 5000)
+    print(f"Iniciando en servidor {server_address[0]} en el puerto {server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(5)
+
+    while True:
+        print("Esperando conexion...")
+        try:
+            conn, client_address = sock.accept()
+            print(f"Conexion desde {client_address[0]} en puerto {client_address[1]}")
+            inicioRecv=time.perf_counter()
+            escritura=0
+            lst=[]
+            while True:
+                iniParcial=time.perf_counter()
+                t= Thread(target=clientHandler,args=(lst,))
+                t.start()
+                t.join()
+                
+                if lst:
+                    data = lst.pop(0)
+                    with open("texto.txt", "a") as f:
+                        f.write(data)
+                else:
+                    print("no hay mas datos")
+                    break
+                finParcial=time.perf_counter()
+                escritura+=finParcial-iniParcial
+            FinRecv=time.perf_counter()
+            print(f"Tiempo de escritura:{escritura}")
+            print(f"Tiempo de rececpion:{FinRecv-inicioRecv}")
+        except KeyboardInterrupt:
+            print("El usuario ha terminado el programa")
+            break
+#suma sin error de datos

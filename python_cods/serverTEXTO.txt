@@ -1,0 +1,47 @@
+import socket
+import time
+SOCK_BUFFER = 1024
+
+
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ("0.0.0.0", 5000)
+    print(f"Iniciando en servidor {server_address[0]} en el puerto {server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(5)
+
+    while True:
+        print("Esperando conexion...")
+        try:
+            conn, client_address = sock.accept()
+            print(f"Conexion desde {client_address[0]} en puerto {client_address[1]}")
+
+            try:
+                inicioRecv=time.perf_counter()
+                escritura=0
+                while True:
+                    data = conn.recv(SOCK_BUFFER)
+                    msg_raw_decodificado = data.decode("utf-8")
+                    if data:
+                        iniParcial=time.perf_counter()
+                        with open("lectura.txt","a")as f:
+                            f.write(msg_raw_decodificado)
+                        finParcial=time.perf_counter()
+                        escritura+=finParcial-iniParcial
+                    else:
+                        print("No hay mas datos")
+                        break
+                FinRecv=time.perf_counter()
+                print(f"Tiempo de rececpion:{FinRecv-inicioRecv}")
+                print(f"El tiempo de escritura es : {escritura}")
+            except ConnectionResetError:
+                print("El cliente ha cerrado la conexion de manera abrupta")
+            finally:
+                print("Cerrando conexion con el cliente")
+                conn.close()
+        except KeyboardInterrupt:
+            print("El usuario ha terminado el programa")
+            break
+#suma sin error de datos

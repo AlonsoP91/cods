@@ -1,0 +1,104 @@
+import time
+from multiprocessing import Process, Manager,Pool, cpu_count
+
+def paralelizar(num,rlist: list,div: int=1):
+    ini=1
+    sum=0
+    num=num//div
+    while ini<=((num)):
+        sum+=num*div
+        ini=ini+1
+    rlist.append(sum)
+    #print(rlist)
+    #resulado n*n
+
+def paralela (num):
+    
+    manager = Manager()
+    resultados = manager.list()
+    p1=Process(target=paralelizar,args=(num,resultados,2,))
+    p2=Process(target=paralelizar,args=(num,resultados,2,))
+    p1.start()
+    p2.start()
+
+    p1.join()
+    p2.join()
+
+    final=resultados[0]+resultados[1]
+    return final
+    
+def serial (i):
+    ini=1
+    sum=0
+
+    while ini<=((2*i)-1):
+        sum+=ini
+        ini=ini+2
+    
+    return sum
+
+def main(ini,i):
+    manager = Manager()
+    resu = manager.list()
+    p=Pool(processes=i)
+    listini=[ini]*i
+    listresu=[resu]*i
+    listi=[i]*i
+    p.starmap(paralelizar,zip(listini,listresu,listi))
+    p.close()
+    p.join()
+    suma=0
+    for ini in range(i):suma+=resu[ini]
+    
+    return suma
+    
+       
+if __name__ == '__main__':
+    lsts= [1_000_000_0, 500_000_0, 100_000_0, 10_000_0, 1_000_0]
+    Tserial=0
+    cabecera=""
+    with open("respuestas_1.txt", "w+") as f: 
+        
+    #serial
+    
+        texto="TIEMPOS DE EJCUCION PARA MODO SERIAL:\n"
+        TIserial=time.perf_counter()
+        for ini in lsts:
+            inicio=time.perf_counter()
+            print(serial(ini))
+            fin=time.perf_counter()
+            #print(f"timepo de ejecucion serial para {ini}:{fin-inicio}") 
+            texto+=f"timepo de ejecucion serial para {ini}:{fin-inicio}\n"   
+        TFserial=time.perf_counter()
+        Tserial=TFserial-TIserial
+        #multiprocess
+        
+        inicio=time.perf_counter()
+        for i in lsts:
+            print(paralela(i))
+        
+        fin=time.perf_counter()
+        print(fin-inicio)
+            
+        listasize=[2,4,8]
+        paralelo=0
+        tiempos=list()
+        texto+="TIEMPOS PARA EJECUCION MULTIPROCESO\n"
+        for i in listasize:
+            print(f"procesando {i}")
+            texto+=f"procesando {i}:\n"
+            parcial=list()
+            totalI=time.perf_counter()
+            for ini in lsts:
+                inicio = time.perf_counter()    
+                main(ini,i)
+                fin = time.perf_counter()
+                texto+=f"tiempo de ejecucion para {i} nucleos con el numero {ini}: {fin-inicio}\n"
+            
+                print(fin-inicio)
+            totalF=time.perf_counter()
+            paralelo=totalF-totalI
+            print(totalF-totalI)
+        f.write(texto)
+        
+        print(f"El speed up es de {Tserial/paralelo}")

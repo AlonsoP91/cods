@@ -1,0 +1,66 @@
+
+import time
+
+SOCK_BUFFER = 1024
+
+tiempos=list()
+
+def client_handler(conn,client_address):
+    global tiempos
+    try:
+        print(f"Conectado desde {client_address[0]}")
+        time_rep=0
+        time_esc=0
+        while True:
+            ini_recp=time.perf_counter()
+            data = conn.recv(SOCK_BUFFER)
+            fin_recp=time.perf_counter()
+            time_rep+=fin_recp-ini_recp
+
+            if data:
+                ini_esc=time.perf_counter()
+                with open("Data_recibida.txt","a") as f:
+                    f.write(data.decode())
+                fin_esc=time.perf_counter()
+                time_esc+=fin_esc-ini_esc
+            else:
+                print("No hay mas datos")
+                break
+    except ConnectionResetError:
+        print("El cliente ha cerrado la conexion de manera abrupta")
+    finally:
+        print("Cerrando la conexion con el cliente")
+        print(f"Tiempo de recepcion es: {time_rep} segundos\nTiempo de escritura es: {time_esc} segundos")
+        tiempos.append(time_rep)
+        conn.close()
+
+
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ('localhost', 5000)
+    print(f"Iniciando conexion en {server_address[0]}:{server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(1)
+
+    while True:
+        print("Esperando conexiones")
+        conn, client_address = sock.accept()
+        client_handler(conn, client_address )
+
+
+        #espera a la siguiente conexion para realizar la escritura
+        print("Esperando conexiones para multihilos")
+        conn, client_address = sock.accept()
+        client_thread=Thread(target=client_handler,args=(conn,client_address))
+        client_thread.start()
+        client_thread.join()        
+        break
+
+    print(f"El speedup de la funcion con multihilos y la funcion sincrona es: {tiempos[1]/tiempos[0]}")
+
+        
+#Considero que no se podría mejorar el tiempo de ejecucion de otras etapas del programa con el uso de multihilos,
+#dado que el uso de multihilos es forzado a esperar por una operacion de I/O y por ello tiene un mayor tiempo de ejecucion,
+#entonces si se aplicara en otras etapas del programa, aumentaría el tiempo del programa

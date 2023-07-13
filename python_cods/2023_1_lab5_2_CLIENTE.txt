@@ -1,0 +1,28 @@
+import socket
+import time
+
+SOCK_BUFFER = 1024
+
+
+if __name__ == '__main__':
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ("0.0.0.0", 5000)
+
+    print(f"Conectando a {server_address[0]}:{server_address[1]}")
+
+    sock.connect(server_address)
+    
+    ini_lec=time.perf_counter()
+    with open("big_file.txt","r") as f:
+        contenido=f.read()
+    fin_lec=time.perf_counter()
+
+    try:
+        ini_env=time.perf_counter()
+        sock.sendall(contenido.encode("utf-8"))
+        fin_env=time.perf_counter()
+        print("Data enviada")
+    finally:
+        print("Cerrando la conexion")
+        print(f"Tiempo de lectura es: {fin_lec-ini_lec} segundos\nTiempo de envio es: {fin_env-ini_env} segundos")
+        sock.close()

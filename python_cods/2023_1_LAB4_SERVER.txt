@@ -1,0 +1,74 @@
+
+import socket
+import json
+from operator import itemgetter
+import time
+if __name__ == '__main__':   
+    
+    
+    SOCK_BUFFER = 1024
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    server_address = ("0.0.0.0", 5000)
+    print(f"Iniciando en servidor {server_address[0]} en el puerto {server_address[1]}")
+    sock.bind(server_address)
+
+    sock.listen(5)
+
+
+
+    while True:
+        print("Esperando conexion...")
+        conn, client_address = sock.accept()
+        with conn:
+            print(f"Conexion desde {client_address[0]} en puerto {client_address[1]}")
+            datos=conn.recv(SOCK_BUFFER)
+            numero=datos.decode()
+
+            numero=int(numero)
+            inicio_ordenamiento=time.perf_counter() 
+            with open('empleados.csv','r') as f:
+                contenido=f.read()
+            lineas=contenido.split("\n")
+            lineas=lineas[1:5000]
+            nombre=list()
+            apellido=list()
+            edad=list()
+            email=list()
+            genero=list()
+            salario=list()
+            diccionario=dict()
+            diccionarioAux=dict()
+            for linea in lineas:
+                datos=linea.split(',')
+                nombre.append(datos[0])
+                apellido.append(datos[1])
+                edad.append(datos[2])
+                email.append(datos[3])
+                genero.append(datos[4])
+                salario.append(datos[5])
+            
+
+
+            i=0
+            for elem in nombre:
+                if(i==numero):break
+                diccionario[nombre[i]]=f"{apellido[i]},{edad[i]},{email[i]},{genero[i]},{salario[i]}|"
+                i=i+1
+
+            j=0
+            for elem in nombre:
+                if(j==numero):break
+                diccionarioAux[nombre[i]]=int(edad[i])
+                j=j+1
+            
+            diccionarioAux=sorted((diccionarioAux.items()),key=itemgetter(1))
+
+            print(diccionarioAux)
+
+            fin_ordenamiento=time.perf_counter() 
+            print(fin_ordenamiento-inicio_ordenamiento)
+            print(diccionario)
+            empleados=json.dumps(diccionario)
+            conn.sendall(empleados.encode())

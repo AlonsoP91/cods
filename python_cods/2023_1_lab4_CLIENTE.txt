@@ -1,0 +1,63 @@
+import socket
+import json
+import csv
+import time
+
+HOST = '192.168.56.1'
+PORT = 5006
+read_times = []
+sort_times = []
+send_times = []
+numbers = [i for i in range(100,5001,100)]
+
+IP = 5000
+if __name__ == '__main__':
+    try:
+        total=0
+        while True:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_address = (HOST,IP)
+            sock.connect(server_address)
+            inicio_total = time.perf_counter()
+            inicio_entrada = time.perf_counter()
+            n=input("Ingrese el numero de empleados solicitados:")
+            
+            fin_entrada = time.perf_counter() 
+            inicio_envio=time.perf_counter() 
+            sock.sendall(n.encode())
+            fin_envio=time.perf_counter() 
+
+            inicio_recepcion=time.perf_counter() 
+            datos2=sock.recv(1024)
+            fin_recepcion=time.perf_counter() 
+
+            dict=datos2.decode()
+            diccionario=json.loads(dict) 
+            print(diccionario)
+            
+            msg=json.dumps(diccionario)
+            inicio_escritura=time.perf_counter() 
+            msg=msg[1:-1]
+            lineas=msg.split('|')
+            texto=""
+            for linea in lineas:
+                texto=texto+linea+"\n"
+           
+            with open('descarga.json','w+',newline='')as file:
+
+                file.write(texto+f"\n") 
+            fin_escritura=time.perf_counter() 
+            fin_total = time.perf_counter()
+
+            print(f"tiempo total:{fin_total-inicio_total}")
+            print(f"tiempo envio:{fin_envio-inicio_envio}")
+            print(f"tiempo de escritura:{fin_escritura-inicio_escritura}")
+            print(f"tiempo de recepcion:{fin_recepcion-inicio_recepcion}")
+
+            break
+    except ConnectionRefusedError:
+
+        print("Servido cerrado")
+    finally:
+        sock.close()
+

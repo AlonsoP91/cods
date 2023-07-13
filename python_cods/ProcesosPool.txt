@@ -1,0 +1,47 @@
+import time
+import numpy as np
+from itertools import repeat
+from multiprocessing import Pool, cpu_count
+
+
+M = 5_000
+N = 5_000
+
+def mult_vector_vector(x, y):
+    suma = 0
+
+    for i in range(len(x)):
+        suma += x[i] * y[i]
+    
+    return suma
+
+def main(mat_M, vector_A,listasize):
+        p = Pool(processes=listasize)
+        args = zip(mat_M, repeat(vector_A))
+        print(args)
+        resultados = p.starmap(mult_vector_vector, args)
+        p.close()
+        p.join()
+        
+        return resultados
+    
+if __name__ == "__main__":
+    mat_M = np.random.randint(100, size=(M, N))
+    vector_A = np.random.randint(100, size=(N, ))
+    listasize=[2,4,6,8]
+    tiempos=list()
+    for i in listasize:
+        parcial=list()
+        for j in range(10):
+            print(f"procesando iteracion{j} de {i}:") 
+            inicio = time.perf_counter()
+            main(mat_M, vector_A,i)
+            fin = time.perf_counter()
+            parcial.append(fin-inicio)
+        parcial.sort()
+        valor=parcial[len(parcial) // 2]    
+        tiempos.append([listasize,valor])#lista de tuplas
+        
+    for t in tiempos:
+        
+        print(f"Tiempo de ejecucion multiproceso {t[0]}: {t[1]} segundos")
